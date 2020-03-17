@@ -1,6 +1,7 @@
 package androidx.fragment.app;
 
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -82,19 +83,49 @@ public class FragmentationMagician {
     private static void hookStateSaved(FragmentManager fragmentManager, Runnable runnable) {
         if (!(fragmentManager instanceof FragmentManagerImpl)) return;
 
-        FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
-        if (isStateSaved(fragmentManager)) {
-            boolean tempStateSaved = fragmentManagerImpl.mStateSaved;
-            boolean tempStopped = fragmentManagerImpl.mStopped;
-            fragmentManagerImpl.mStateSaved = false;
-            fragmentManagerImpl.mStopped = false;
+        try {
+            FragmentManagerImpl fragmentManagerImpl = (FragmentManagerImpl) fragmentManager;
+            if (isStateSaved(fragmentManager)) {
+                boolean tempStateSaved = (boolean) getValue(fragmentManagerImpl, "mStateSaved");
+                boolean tempStopped = (boolean) getValue(fragmentManagerImpl, "mStopped");
 
-            runnable.run();
+                setValue(fragmentManagerImpl, "mStateSaved", false);
+                setValue(fragmentManagerImpl, "mStopped", false);
 
-            fragmentManagerImpl.mStopped = tempStopped;
-            fragmentManagerImpl.mStateSaved = tempStateSaved;
-        } else {
-            runnable.run();
+                runnable.run();
+
+                setValue(fragmentManagerImpl, "mStateSaved", tempStopped);
+                setValue(fragmentManagerImpl, "mStopped", tempStateSaved);
+            } else {
+                runnable.run();
+            }
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
         }
+    }
+
+    /***
+     * 获取私有成员变量的值
+     *
+     */
+    public static Object getValue(Object instance, String fieldName)
+            throws IllegalAccessException, NoSuchFieldException {
+
+        Field field = instance.getClass().getDeclaredField(fieldName);
+        // 参数值为true，禁止访问控制检查
+        field.setAccessible(true);
+        return field.get(instance);
+    }
+
+    /***
+     * 设置私有成员变量的值
+     *
+     */
+    public static void setValue(Object instance, String fileName, Object value)
+            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+
+        Field field = instance.getClass().getDeclaredField(fileName);
+        field.setAccessible(true);
+        field.set(instance, value);
     }
 }

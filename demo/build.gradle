@@ -58,11 +58,6 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     api project(':fragmentation')
-    api project(':fragmentation_swipeback')
-    // EventBus
-    api project(':eventbus_activity_scope')
-    implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
-    //    apt 'org.greenrobot:eventbus-annotation-processor:3.0.1'
 }
 

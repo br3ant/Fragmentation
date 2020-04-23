@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 import me.yokeyword.fragmentation.helper.internal.AnimatorHelper;
 import me.yokeyword.fragmentation.helper.internal.ResultRecord;
@@ -275,6 +276,15 @@ public class SupportFragmentDelegate {
     }
 
     /**
+     * Lazy initial，Called when fragment is first visible.
+     * AndroidX 下  BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT 模式用
+     * <p>
+     * 同级下的 懒加载 ＋ ViewPager下的懒加载  的结合回调方法
+     */
+    public void onLazyInitX() {
+    }
+
+    /**
      * Called when the fragment is visible.
      * <p>
      * 当Fragment对用户可见时回调
@@ -357,9 +367,9 @@ public class SupportFragmentDelegate {
     }
 
     /**
-     * 类似  {@link Activity#onActivityResult(int, int, Intent)}
+     * 类似
      * <p>
-     * Similar to {@link Activity#onActivityResult(int, int, Intent)}
+     * Similar to
      *
      * @see #startForResult(ISupportFragment, int)
      */
@@ -368,9 +378,9 @@ public class SupportFragmentDelegate {
 
     /**
      * 在start(TargetFragment,LaunchMode)时,启动模式为SingleTask/SingleTop, 回调TargetFragment的该方法
-     * 类似 {@link Activity#onNewIntent(Intent)}
+     * 类似
      * <p>
-     * Similar to {@link Activity#onNewIntent(Intent)}
+     * Similar to
      *
      * @param args putNewBundle(Bundle newBundle)
      * @see #start(ISupportFragment, int)
@@ -459,29 +469,29 @@ public class SupportFragmentDelegate {
      * @param launchMode Similar to Activity's LaunchMode.
      */
     public void start(final ISupportFragment toFragment, @ISupportFragment.LaunchMode int launchMode) {
-        mTransactionDelegate.dispatchStartTransaction(mFragment.getFragmentManager(), mSupportF, toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD);
+        mTransactionDelegate.dispatchStartTransaction(mFragment.getParentFragmentManager(), mSupportF, toFragment, 0, launchMode, TransactionDelegate.TYPE_ADD);
     }
 
     /**
      * Launch an fragment for which you would like a result when it poped.
      */
     public void startForResult(ISupportFragment toFragment, int requestCode) {
-        mTransactionDelegate.dispatchStartTransaction(mFragment.getFragmentManager(), mSupportF, toFragment, requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT);
+        mTransactionDelegate.dispatchStartTransaction(mFragment.getParentFragmentManager(), mSupportF, toFragment, requestCode, ISupportFragment.STANDARD, TransactionDelegate.TYPE_ADD_RESULT);
     }
 
     /**
      * Start the target Fragment and pop itself
      */
     public void startWithPop(ISupportFragment toFragment) {
-        mTransactionDelegate.startWithPop(mFragment.getFragmentManager(), mSupportF, toFragment);
+        mTransactionDelegate.startWithPop(mFragment.getParentFragmentManager(), mSupportF, toFragment);
     }
 
     public void startWithPopTo(ISupportFragment toFragment, Class<?> targetFragmentClass, boolean includeTargetFragment) {
-        mTransactionDelegate.startWithPopTo(mFragment.getFragmentManager(), mSupportF, toFragment, targetFragmentClass.getName(), includeTargetFragment);
+        mTransactionDelegate.startWithPopTo(mFragment.getParentFragmentManager(), mSupportF, toFragment, targetFragmentClass.getName(), includeTargetFragment);
     }
 
     public void replaceFragment(ISupportFragment toFragment, boolean addToBackStack) {
-        mTransactionDelegate.dispatchStartTransaction(mFragment.getFragmentManager(), mSupportF, toFragment, 0, ISupportFragment.STANDARD, addToBackStack ? TransactionDelegate.TYPE_REPLACE : TransactionDelegate.TYPE_REPLACE_DONT_BACK);
+        mTransactionDelegate.dispatchStartTransaction(mFragment.getParentFragmentManager(), mSupportF, toFragment, 0, ISupportFragment.STANDARD, addToBackStack ? TransactionDelegate.TYPE_REPLACE : TransactionDelegate.TYPE_REPLACE_DONT_BACK);
     }
 
     public void startChild(ISupportFragment toFragment) {
@@ -505,7 +515,7 @@ public class SupportFragmentDelegate {
     }
 
     public void pop() {
-        mTransactionDelegate.pop(mFragment.getFragmentManager());
+        mTransactionDelegate.pop(mFragment.getParentFragmentManager());
     }
 
     /**
@@ -537,7 +547,7 @@ public class SupportFragmentDelegate {
     }
 
     public void popTo(Class<?> targetFragmentClass, boolean includeTargetFragment, Runnable afterPopTransactionRunnable, int popAnim) {
-        mTransactionDelegate.popTo(targetFragmentClass.getName(), includeTargetFragment, afterPopTransactionRunnable, mFragment.getFragmentManager(), popAnim);
+        mTransactionDelegate.popTo(targetFragmentClass.getName(), includeTargetFragment, afterPopTransactionRunnable, mFragment.getParentFragmentManager(), popAnim);
     }
 
     public void popToChild(Class<?> targetFragmentClass, boolean includeTargetFragment) {
@@ -553,7 +563,7 @@ public class SupportFragmentDelegate {
     }
 
     public void popQuiet() {
-        mTransactionDelegate.popQuiet(mFragment.getFragmentManager(), mFragment);
+        mTransactionDelegate.popQuiet(mFragment.getParentFragmentManager(), mFragment);
     }
 
     private FragmentManager getChildFragmentManager() {

@@ -9,15 +9,17 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.FragmentationMagician;
+import androidx.lifecycle.Lifecycle;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import me.yokeyword.fragmentation.exception.AfterSaveStateTransactionWarning;
 import me.yokeyword.fragmentation.helper.internal.ResultRecord;
 import me.yokeyword.fragmentation.helper.internal.TransactionRecord;
@@ -451,18 +453,19 @@ class TransactionDelegate {
         if (showFragment == hideFragment) return;
 
         FragmentTransaction ft = fm.beginTransaction().show((Fragment) showFragment);
+        ft.setMaxLifecycle((Fragment) showFragment, Lifecycle.State.RESUMED);
 
         if (hideFragment == null) {
             List<Fragment> fragmentList = FragmentationMagician.getActiveFragments(fm);
-            if (fragmentList != null) {
-                for (Fragment fragment : fragmentList) {
-                    if (fragment != null && fragment != showFragment) {
-                        ft.hide(fragment);
-                    }
+            for (Fragment fragment : fragmentList) {
+                if (fragment != null && fragment != showFragment) {
+                    ft.hide(fragment);
+                    ft.setMaxLifecycle(fragment, Lifecycle.State.STARTED);
                 }
             }
         } else {
             ft.hide((Fragment) hideFragment);
+            ft.setMaxLifecycle((Fragment) hideFragment, Lifecycle.State.STARTED);
         }
         supportCommit(fm, ft);
     }

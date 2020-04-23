@@ -19,7 +19,7 @@ android {
 
 dependencies {
     compileOnly "androidx.appcompat:appcompat:1.1.0"
-    api 'androidx.fragment:fragment:1.2.2'
+    compileOnly 'androidx.fragment:fragment:1.2.4'
 }
 
 //publish {

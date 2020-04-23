@@ -1,8 +1,12 @@
 package me.yokeyword.fragmentation;
 
 import android.os.Bundle;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -38,7 +42,14 @@ public interface ISupportFragment {
 
     void onEnterAnimationEnd(@Nullable Bundle savedInstanceState);
 
+    /**
+     * Use @onLazyInitX in AndroidX
+     * Use {@link FragmentTransaction#setMaxLifecycle(Fragment, Lifecycle.State)}
+     */
+    @Deprecated
     void onLazyInitView(@Nullable Bundle savedInstanceState);
+
+    void onLazyInitX();
 
     void onSupportVisible();
 
